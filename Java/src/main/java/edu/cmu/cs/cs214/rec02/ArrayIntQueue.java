@@ -7,9 +7,6 @@ import java.util.Arrays;
  * the queue starts out at the head of the array, allowing the queue to grow and
  * shrink in constant time.
  *
- * TODO: This implementation contains three bugs! Use your tests to determine the
- * source of the bugs and correct them!
- *
  * @author Alex Lockwood
  * @author Ye Lu
  */
@@ -73,11 +70,16 @@ public class ArrayIntQueue implements IntQueue {
 
     /** {@inheritDoc} */
     public boolean isEmpty() {
-        return size >= 0;
+        // BUG FIXED: size >= 0 was always true
+        return size == 0;
     }
 
     /** {@inheritDoc} */
     public Integer peek() {
+        // BUG FIXED: Added empty check to return null
+        if (isEmpty()) {
+            return null;
+        }
         return elementData[head];
     }
 
@@ -95,12 +97,14 @@ public class ArrayIntQueue implements IntQueue {
             int oldCapacity = elementData.length;
             int newCapacity = 2 * oldCapacity + 1;
             int[] newData = new int[newCapacity];
-            for (int i = head; i < oldCapacity; i++) {
-                newData[i - head] = elementData[i];
+            
+            // BUG FIXED: Circular array element transfer
+            // We need to copy elements starting from head to the end of old array,
+            // then from the beginning of old array to head.
+            for (int i = 0; i < size; i++) {
+                newData[i] = elementData[(head + i) % oldCapacity];
             }
-            for (int i = 0; i < head; i++) {
-                newData[head - i] = elementData[i];
-            }
+            
             elementData = newData;
             head = 0;
         }

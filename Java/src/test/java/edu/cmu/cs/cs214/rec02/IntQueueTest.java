@@ -12,65 +12,47 @@ import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
-
 /**
- * TODO: 
- * 1. The {@link LinkedIntQueue} has no bugs. We've provided you with some example test cases.
- * Write your own unit tests to test against IntQueue interface with specification testing method 
- * using mQueue = new LinkedIntQueue();
- * 
- * 2. 
- * Comment `mQueue = new LinkedIntQueue();` and uncomment `mQueue = new ArrayIntQueue();`
- * Use your test cases from part 1 to test ArrayIntQueue and find bugs in the {@link ArrayIntQueue} class
- * Write more unit tests to test the implementation of ArrayIntQueue, with structural testing method
- * Aim to achieve 100% line coverage for ArrayIntQueue
- *
- * @author Alex Lockwood, George Guo, Terry Li
+ * Unit tests for IntQueue interface.
  */
 public class IntQueueTest {
 
     private IntQueue mQueue;
     private List<Integer> testList;
 
-    /**
-     * Called before each test.
-     */
     @Before
     public void setUp() {
-        // comment/uncomment these lines to test each class
+        // LinkedIntQueue-г шалгах бол доорх мөрийг идэвхжүүлж, Array-г comment болгоно
+        // mQueue = new LinkedIntQueue(); 
+        
         mQueue = new LinkedIntQueue();
-    //    mQueue = new ArrayIntQueue();
-
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
 
     @Test
     public void testIsEmpty() {
-        // This is an example unit test
         assertTrue(mQueue.isEmpty());
     }
 
     @Test
     public void testNotEmpty() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(10);
+        assertFalse(mQueue.isEmpty());
     }
 
     @Test
     public void testPeekEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        assertNull(mQueue.peek());
     }
 
     @Test
     public void testPeekNoEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(5);
+        assertEquals(Integer.valueOf(5), mQueue.peek());
     }
 
     @Test
     public void testEnqueue() {
-        // This is an example unit test
         for (int i = 0; i < testList.size(); i++) {
             mQueue.enqueue(testList.get(i));
             assertEquals(testList.get(0), mQueue.peek());
@@ -80,13 +62,59 @@ public class IntQueueTest {
 
     @Test
     public void testDequeue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(1);
+        mQueue.enqueue(2);
+        assertEquals(Integer.valueOf(1), mQueue.dequeue());
+        assertEquals(1, mQueue.size());
+        assertEquals(Integer.valueOf(2), mQueue.dequeue());
+        assertTrue(mQueue.isEmpty());
     }
 
     @Test
+    public void testClear() {
+        mQueue.enqueue(1);
+        mQueue.enqueue(2);
+        mQueue.clear();
+        assertEquals(0, mQueue.size());
+        assertTrue(mQueue.isEmpty());
+    }
+
+    @Test
+    public void testEnsureCapacity() {
+        // Initial size is 10, so let's push it beyond that
+        for (int i = 0; i < 15; i++) {
+            mQueue.enqueue(i);
+        }
+        assertEquals(15, mQueue.size());
+        for (int i = 0; i < 15; i++) {
+            assertEquals(Integer.valueOf(i), mQueue.dequeue());
+        }
+    }
+
+    @Test
+    public void testEnsureCapacityWithWrapAround() {
+        // 1. Fill some elements
+        for (int i = 0; i < 5; i++) mQueue.enqueue(i);
+        // 2. Remove some to move 'head' away from 0
+        for (int i = 0; i < 3; i++) mQueue.dequeue();
+        // 3. Fill until it reaches initial capacity (10) to trigger wrap-around
+        for (int i = 5; i < 13; i++) mQueue.enqueue(i);
+        
+        // At this point, ensureCapacity should have triggered correctly
+        assertEquals(10, mQueue.size());
+        assertEquals(Integer.valueOf(3), mQueue.peek());
+    }
+    @Test
+    public void testDequeueEmptyQueue() {
+    // 1. Дараалал хоосон байгаа эсэхийг шалгана
+    assertTrue(mQueue.isEmpty());
+    
+    // 2. Хоосон дарааллаас dequeue хийхэд null ирэх ёстойг шалгана
+    assertNull(mQueue.dequeue());
+   }
+
+    @Test
     public void testContent() throws IOException {
-        // This is an example unit test
         InputStream in = new FileInputStream("src/test/resources/data.txt");
         try (Scanner scanner = new Scanner(in)) {
             scanner.useDelimiter("\\s*fish\\s*");
@@ -95,15 +123,12 @@ public class IntQueueTest {
             while (scanner.hasNextInt()) {
                 int input = scanner.nextInt();
                 correctResult.add(input);
-                System.out.println("enqueue: " + input);
                 mQueue.enqueue(input);
             }
 
             for (Integer result : correctResult) {
-                assertEquals(mQueue.dequeue(), result);
+                assertEquals(result, mQueue.dequeue());
             }
         }
     }
-
-
 }
