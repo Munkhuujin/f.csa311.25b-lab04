@@ -53,7 +53,10 @@ public void testDequeueEmptyQueue() {
 ** cd java
 
 ** mvn test зураг
+<img width="1082" height="323" alt="mvn test" src="https://github.com/user-attachments/assets/5ebb19bc-f521-4486-84ae-2a1dda2501da" />
 
 ** mvn site зураг
+<img width="1273" height="335" alt="mvn site" src="https://github.com/user-attachments/assets/b1e0d053-be22-44f6-aa38-9e5a08fda823" />
 
 ** JaCoCo зураг
+<img width="1033" height="172" alt="jacoco" src="https://github.com/user-attachments/assets/8782f802-e275-4053-82d2-d4852828d9ca" />
